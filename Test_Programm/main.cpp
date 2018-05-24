@@ -649,7 +649,7 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
     dlib::matrix<float> testNN;
 
     // окно
-    dlib::image_window win, win2, win3;
+    dlib::image_window win;
 
     // точка
     dlib::point po, pod;
@@ -688,9 +688,8 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
 
 
     // dlib shape predictor
-    shape_predictor sp, spr;
+    shape_predictor sp;
     deserialize("test/shape_predictor_dlib.dat") >> sp;
-    deserialize("test/shape_predictor_dlib.dat") >> spr;
     full_object_detection shape;
 
     std::vector<float> coords;
@@ -748,10 +747,13 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
                 restored = restore_image(testNN, leb_patch, reb_patch, n_patch, le_patch, re_patch, coords);
 
                 auto time = (boost::posix_time::microsec_clock::universal_time() - testTimemcs).total_microseconds();
-                cout << "Time per frame: " << time << " mcs." << endl;
+                cout << "Neural network time per frame: " << time << " mcs." << endl;
 
                 // отправляем также в длиб
+                boost::posix_time::ptime dlibTimemcs = boost::posix_time::microsec_clock::universal_time();
                 shape = sp(faceRectDlib, get_rect(faceRectDlib));
+                auto dlibtime = (boost::posix_time::microsec_clock::universal_time() - dlibTimemcs).total_microseconds();
+                cout << "Dlib time per frame: " << dlibtime << " mcs." << endl << "Comp: " << time / (time + dlibtime) << "%" << endl;
 
                 win.add_overlay(dlib::rectangle((long)faces[i].rect.tl().x, (long)faces[i].rect.tl().y, (long)faces[i].rect.br().x - 1, (long)faces[i].rect.br().y - 1), rgb_pixel(0,255,0));
 
