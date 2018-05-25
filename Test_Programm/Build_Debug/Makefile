@@ -15,7 +15,7 @@ CXX           = g++
 DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -DDLIB_USE_CUDA -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../../Test_Programm -I. -I../../../../lib/dlib-19.4 -I../../../../lib/LMDBwrapper -I../../../TrainDlibNet/TestFaceDetectorVideoCreator -I../../../../Qt/5.9.1/gcc_64/include -I../../../../Qt/5.9.1/gcc_64/include/QtCore -I. -I../../../../Qt/5.9.1/gcc_64/mkspecs/linux-g++
+INCPATH       = -I../../Test_Programm -I. -I../../../../lib/dlib-19.4 -I../../../../lib/LMDBwrapper -I../../TestFaceDetectorVideoCreator -I../../../../Qt/5.9.1/gcc_64/include -I../../../../Qt/5.9.1/gcc_64/include/QtCore -I. -I../../../../Qt/5.9.1/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/ginseng/Qt/5.9.1/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -55,7 +55,7 @@ SOURCES       = ../main.cpp \
 		../../../../lib/LMDBwrapper/LMDB.cpp \
 		../../../../lib/LMDBwrapper/LMDBCursor.cpp \
 		../../../../lib/LMDBwrapper/LMDBTransaction.cpp \
-		../../../TrainDlibNet/TestFaceDetectorVideoCreator/CpuFaceDetector.cpp 
+		../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp 
 OBJECTS       = main.o \
 		source.o \
 		LMDB.o \
@@ -221,6 +221,7 @@ DIST          = /home/Qt/5.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/Qt/5.9.1/gcc_64/mkspecs/features/qt_config.prf \
 		/home/Qt/5.9.1/gcc_64/mkspecs/linux-g++/qmake.conf \
 		/home/Qt/5.9.1/gcc_64/mkspecs/features/spec_post.prf \
+		../.qmake.stash \
 		/home/Qt/5.9.1/gcc_64/mkspecs/features/exclusive_builds.prf \
 		/home/Qt/5.9.1/gcc_64/mkspecs/features/toolchain.prf \
 		/home/Qt/5.9.1/gcc_64/mkspecs/features/default_pre.prf \
@@ -243,7 +244,7 @@ DIST          = /home/Qt/5.9.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../lib/LMDBwrapper/LMDB.cpp \
 		../../../../lib/LMDBwrapper/LMDBCursor.cpp \
 		../../../../lib/LMDBwrapper/LMDBTransaction.cpp \
-		../../../TrainDlibNet/TestFaceDetectorVideoCreator/CpuFaceDetector.cpp
+		../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp
 QMAKE_TARGET  = TestNetwork
 DESTDIR       = 
 TARGET        = TestNetwork
@@ -414,6 +415,7 @@ Makefile: ../TestNetwork.pro ../../../../Qt/5.9.1/gcc_64/mkspecs/features/spec_p
 		../../../../Qt/5.9.1/gcc_64/mkspecs/features/qt_config.prf \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/features/toolchain.prf \
 		../../../../Qt/5.9.1/gcc_64/mkspecs/features/default_pre.prf \
@@ -593,6 +595,7 @@ Makefile: ../TestNetwork.pro ../../../../Qt/5.9.1/gcc_64/mkspecs/features/spec_p
 ../../../../Qt/5.9.1/gcc_64/mkspecs/features/qt_config.prf:
 ../../../../Qt/5.9.1/gcc_64/mkspecs/linux-g++/qmake.conf:
 ../../../../Qt/5.9.1/gcc_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../../../Qt/5.9.1/gcc_64/mkspecs/features/exclusive_builds.prf:
 ../../../../Qt/5.9.1/gcc_64/mkspecs/features/toolchain.prf:
 ../../../../Qt/5.9.1/gcc_64/mkspecs/features/default_pre.prf:
@@ -627,7 +630,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../../Qt/5.9.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp ../../../../lib/dlib-19.4/dlib/all/source.cpp ../../../../lib/LMDBwrapper/LMDB.cpp ../../../../lib/LMDBwrapper/LMDBCursor.cpp ../../../../lib/LMDBwrapper/LMDBTransaction.cpp ../../../TrainDlibNet/TestFaceDetectorVideoCreator/CpuFaceDetector.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../../../../lib/dlib-19.4/dlib/all/source.cpp ../../../../lib/LMDBwrapper/LMDB.cpp ../../../../lib/LMDBwrapper/LMDBCursor.cpp ../../../../lib/LMDBwrapper/LMDBTransaction.cpp ../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -725,7 +728,7 @@ main.o: ../main.cpp ../../../../Qt/5.9.1/gcc_64/include/QtCore/QCoreApplication 
 		../../../../lib/LMDBwrapper/LMDB.h \
 		../../../../lib/LMDBwrapper/LMDBCursor.h \
 		../../../../lib/LMDBwrapper/LMDBTransaction.h \
-		../../../TrainDlibNet/TestFaceDetectorVideoCreator/CpuFaceDetector.h \
+		../../TestFaceDetectorVideoCreator/CpuFaceDetector.h \
 		../../../../lib/dlib-19.4/dlib/array2d.h \
 		../../../../lib/dlib-19.4/dlib/array2d/array2d_kernel.h \
 		../../../../lib/dlib-19.4/dlib/array2d/array2d_kernel_abstract.h \
@@ -2014,8 +2017,8 @@ LMDBCursor.o: ../../../../lib/LMDBwrapper/LMDBCursor.cpp ../../../../lib/LMDBwra
 LMDBTransaction.o: ../../../../lib/LMDBwrapper/LMDBTransaction.cpp ../../../../lib/LMDBwrapper/LMDBTransaction.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o LMDBTransaction.o ../../../../lib/LMDBwrapper/LMDBTransaction.cpp
 
-CpuFaceDetector.o: ../../../TrainDlibNet/TestFaceDetectorVideoCreator/CpuFaceDetector.cpp ../../../TrainDlibNet/TestFaceDetectorVideoCreator/CpuFaceDetector.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CpuFaceDetector.o ../../../TrainDlibNet/TestFaceDetectorVideoCreator/CpuFaceDetector.cpp
+CpuFaceDetector.o: ../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp ../../TestFaceDetectorVideoCreator/CpuFaceDetector.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CpuFaceDetector.o ../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp
 
 ####### Install
 

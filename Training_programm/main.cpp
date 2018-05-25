@@ -778,7 +778,7 @@ void test_network(T &net)
         cout << "Wrong points in euclid dist 3: " << num_wrong_euclid_3 << ", right points: " << num_right_euclid_3 << ". Accuracy: " << fixed << num_right_euclid_3/(double)(num_right_euclid_3+num_wrong_euclid_3) << endl;
         cout << "Wrong points in euclid dist 5: " << num_wrong_euclid_5 << ", right points: " << num_right_euclid_5 << ". Accuracy: " << fixed << num_right_euclid_5/(double)(num_right_euclid_5+num_wrong_euclid_5) << endl;
         if (bpo::cascade_num == 4 || bpo::cascade_num == 0) cout << "Wrong left e_cent in euc dist 3: " << wrong_left_barycenter << ", right points: " << corr_left_barycenter << ". Accuracy: " << fixed << corr_left_barycenter/(double)(corr_left_barycenter+wrong_left_barycenter) << endl;
-        if (bpo::cascade_num == 5 || bpo::cascade_num == 0) cout << "Wrong left e_cent in euc dist 3: " << wrong_right_barycenter << ", right points: " << corr_right_barycenter << ". Accuracy: " << fixed << corr_right_barycenter/(double)(corr_right_barycenter+wrong_right_barycenter) << endl;
+        if (bpo::cascade_num == 5 || bpo::cascade_num == 0) cout << "Wrong right e_cent in euc dist 3: " << wrong_right_barycenter << ", right points: " << corr_right_barycenter << ". Accuracy: " << fixed << corr_right_barycenter/(double)(corr_right_barycenter+wrong_right_barycenter) << endl;
 
     }
 

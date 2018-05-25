@@ -23,7 +23,6 @@ void img_proc::display_image(dlib::matrix<uchar> imgGray, dlib::matrix<float> tr
         po.y() = train(j*2+1);
         win.add_overlay(dlib::image_window::overlay_circle(po, 2, dlib::rgb_pixel(0,0,255)));
         win.add_overlay(po, po, dlib::rgb_pixel(0,0,255));
-        //cin.get();
         //cout << "Test " << j << ": x - " << po.x() << " y - " << po.y() << endl;
     }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');

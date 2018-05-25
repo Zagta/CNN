@@ -231,13 +231,13 @@ void setParams(po::variables_map &vm)
 
     if(vm.count("draftin"))
     {
-        draft_iter_name = vm["draftin"].as<int>();
+        draft_iter_name = vm["draftin"].as<string>();
         cout << "Draft iteration number is: " << draft_iter_name << endl;
     }
 
     if(vm.count("net_leb_in"))
     {
-        iter_name_leb = vm["net_leb_in"].as<int>();
+        iter_name_leb = vm["net_leb_in"].as<string>();
         cout << "Left eyebow iteration number is: " << iter_name_leb << endl;
     }
     if(vm.count("net_leb_nn"))
@@ -248,7 +248,7 @@ void setParams(po::variables_map &vm)
 
     if(vm.count("net_reb_in"))
     {
-        iter_name_reb = vm["net_reb_in"].as<int>();
+        iter_name_reb = vm["net_reb_in"].as<string>();
         cout << "Right eyebow iteration number is: " << iter_name_reb << endl;
     }
     if(vm.count("net_reb_nn"))
@@ -259,7 +259,7 @@ void setParams(po::variables_map &vm)
 
     if(vm.count("net_nose_in"))
     {
-        iter_name_nose = vm["net_nose_in"].as<int>();
+        iter_name_nose = vm["net_nose_in"].as<string>();
         cout << "Nose iteration number is: " << iter_name_nose << endl;
     }
 
@@ -271,7 +271,7 @@ void setParams(po::variables_map &vm)
 
     if(vm.count("net_le_in"))
     {
-        iter_name_le = vm["net_le_in"].as<int>();
+        iter_name_le = vm["net_le_in"].as<string>();
         cout << "Left eye iteration number is: " << iter_name_le << endl;
     }
     if(vm.count("net_le_nn"))
@@ -282,7 +282,7 @@ void setParams(po::variables_map &vm)
 
     if(vm.count("net_re_in"))
     {
-        iter_name_re = vm["net_re_in"].as<int>();
+        iter_name_re = vm["net_re_in"].as<string>();
         cout << "Right eye iteration number is: " << iter_name_re << endl;
     }
     if(vm.count("net_re_nn"))
@@ -296,7 +296,7 @@ template<class T>
 void test(T &net)
 {
     // захват  камеры
-    cv::VideoCapture capture(0); // "/home/ginseng/Projects/DataSet/test.avi" / "/home/ginseng/Projects/DataSet/Surgut.avi"
+    cv::VideoCapture capture(webcam_parametre); // "/home/ginseng/Projects/DataSet/test.avi" / "/home/ginseng/Projects/DataSet/Surgut.avi"
 
     // фрейм с камеры
     cv::Mat frame, newframe, newframerotated;
@@ -711,8 +711,6 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
             // несколько лиц на изображении
             // устанавливаем фрейм в созданое окно и очищаем лейаут
             win.clear_overlay();
-            win2.clear_overlay();
-            win3.clear_overlay();
             for (int i = 0; i < faces.size(); ++i)
             {
                 coords.clear();

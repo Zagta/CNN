@@ -19,11 +19,11 @@ SOURCES += /home/ginseng/lib/LMDBwrapper/LMDB.cpp \
            /home/ginseng/lib/LMDBwrapper/LMDBCursor.cpp \
            /home/ginseng/lib/LMDBwrapper/LMDBTransaction.cpp \
 
-SOURCES += /home/ginseng/Projects/TrainDlibNet/TestFaceDetectorVideoCreator/CpuFaceDetector.cpp
+SOURCES += /home/ginseng/Projects/Facial_keypoint_extraction_CNN/TestFaceDetectorVideoCreator/CpuFaceDetector.cpp
 
 INCLUDEPATH += /home/ginseng/lib/dlib-19.4
 INCLUDEPATH += /home/ginseng/lib/LMDBwrapper
-INCLUDEPATH += /home/ginseng/Projects/TrainDlibNet/TestFaceDetectorVideoCreator
+INCLUDEPATH += /home/ginseng/Projects/Facial_keypoint_extraction_CNN/TestFaceDetectorVideoCreator
 
 LIBS += /home/ginseng/lib/dlib-19.4/buildGPU/libdlib.a
 LIBS += -L/usr/local/cuda/lib64 -lcuda -lcurand -lcublas -lcudart -lcudnn
