@@ -181,6 +181,14 @@ using draft_net_type = loss_mean_squared_multioutput<
                             prelu<bn_con<con<8,20,20,2,2,                       // 91x91
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>>>>>>>>>;
+// черновая сеть 1
+/*
+using draft_net_type = loss_mean_squared_multioutput<
+                            fc<62,
+                            max_pool<2,2,2,2,prelu<bn_con<25,3,3,2,2, //  ->
+                            max_pool<2,2,2,2,prelu<bn_con<20,5,5,2,2, //  ->
+                            input<matrix<uchar>> // 200x200
+                            >>>>>>>>;*/
 
 using eye_bow_net = loss_mean_squared_multioutput<
                             fc<10,
@@ -778,7 +786,7 @@ void test_network(T &net)
         cout << "Wrong points in euclid dist 3: " << num_wrong_euclid_3 << ", right points: " << num_right_euclid_3 << ". Accuracy: " << fixed << num_right_euclid_3/(double)(num_right_euclid_3+num_wrong_euclid_3) << endl;
         cout << "Wrong points in euclid dist 5: " << num_wrong_euclid_5 << ", right points: " << num_right_euclid_5 << ". Accuracy: " << fixed << num_right_euclid_5/(double)(num_right_euclid_5+num_wrong_euclid_5) << endl;
         if (bpo::cascade_num == 4 || bpo::cascade_num == 0) cout << "Wrong left e_cent in euc dist 3: " << wrong_left_barycenter << ", right points: " << corr_left_barycenter << ". Accuracy: " << fixed << corr_left_barycenter/(double)(corr_left_barycenter+wrong_left_barycenter) << endl;
-        if (bpo::cascade_num == 5 || bpo::cascade_num == 0) cout << "Wrong right e_cent in euc dist 3: " << wrong_right_barycenter << ", right points: " << corr_right_barycenter << ". Accuracy: " << fixed << corr_right_barycenter/(double)(corr_right_barycenter+wrong_right_barycenter) << endl;
+        if (bpo::cascade_num == 5 || bpo::cascade_num == 0) cout << "Wrong left e_cent in euc dist 3: " << wrong_right_barycenter << ", right points: " << corr_right_barycenter << ". Accuracy: " << fixed << corr_right_barycenter/(double)(corr_right_barycenter+wrong_right_barycenter) << endl;
 
     }
 
@@ -940,5 +948,4 @@ int main(int argc, char *argv[])
     std::terminate();
     return 0;
 }
-
 
