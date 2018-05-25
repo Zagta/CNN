@@ -791,6 +791,169 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
     }
 }
 
+template<class T1, class T2, class T3>
+void draw(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
+{
+    QString dirpath = QString::fromStdString(dataset_folder);
+
+    // фрейм
+    cv::Mat frame, newframe;
+
+    // матрица dliba
+    matrix<uchar> faceRectDlib, frameDlib;
+
+    // точки
+    dlib::matrix<float> testNN;
+
+    // окно
+    dlib::image_window win, win2, win3;
+
+    // точка
+    dlib::point po, pod;
+
+    // детектор лиц
+    CpuFaceDetector FaceDetect("haarcascade_frontalface_alt.xml", 90);
+    std::vector<CpuFaceDetector::FaceInfo> faces;
+
+    draft_net_type Draft_Net;
+    string DraftNetName = snapshot_directory_path + "/" + draft_network_name + "/" + draft_network_name + "_iter_" + draft_iter_name + ".dat";
+    // загружаем полученную сеть
+    deserialize(DraftNetName) >> Draft_Net;
+
+    // подключение сети левой брови
+    string LeftEyeBowNetName = snapshot_directory_path + "/" + network_name_leb + "/" + network_name_leb + "_iter_" + iter_name_leb + ".dat";
+    deserialize(LeftEyeBowNetName) >> leb_net;
+
+    // подключение сети правой брови
+    string RightEyeBowNetName = snapshot_directory_path + "/" + network_name_reb + "/" + network_name_reb + "_iter_" + iter_name_reb + ".dat";
+    deserialize(RightEyeBowNetName) >> reb_net;
+
+    // подключение сети носа
+    string NoseNetName = snapshot_directory_path + "/" + network_name_nose + "/" + network_name_nose + "_iter_" + iter_name_nose + ".dat";
+    deserialize(NoseNetName) >> n_net;
+
+    // подключение сети левого глаза
+    string LeftEyeNetName = snapshot_directory_path + "/" + network_name_le + "/" + network_name_le + "_iter_" + iter_name_le + ".dat";
+    deserialize(LeftEyeNetName) >> le_net;
+
+    // подключение сети правого глаза
+    string RightEyeNetName = snapshot_directory_path + "/" + network_name_re + "/" + network_name_re + "_iter_" + iter_name_re + ".dat";
+    deserialize(RightEyeNetName) >> re_net;
+
+    dlib::matrix<float> leb_patch, reb_patch, n_patch, le_patch, re_patch, restored;
+    cv::Mat patch;
+
+
+    // dlib shape predictor
+    shape_predictor sp;
+    deserialize("test/shape_predictor_dlib.dat") >> sp;
+    full_object_detection shape;
+
+    std::vector<float> coords;
+
+    QDirIterator it(dirpath, QStringList() << "*.jpg", QDir::Files, QDirIterator::Subdirectories);
+
+    while(it.hasNext())
+    {
+
+        it.next();
+
+        frame = imread(it.filePath().toStdString(), CV_LOAD_IMAGE_UNCHANGED);
+        faces.clear();
+
+        // детектирование
+        faces = FaceDetect.detect(frame);
+
+        assign_image(frameDlib, cv_image<bgr_pixel>(frame));
+        win.set_image(frameDlib);
+
+        if (faces.size() != 0)
+        {
+            // несколько лиц на изображении
+            // устанавливаем фрейм в созданое окно и очищаем лейаут
+            win.clear_overlay();
+            win2.clear_overlay();
+            win3.clear_overlay();
+
+            for (int i = 0; i < faces.size(); ++i)
+            {
+                coords.clear();
+
+                // находим само лицо на изображении
+                newframe = frame(faces[i].rect);
+
+                // преобразуем в градации серого
+                cv::cvtColor(newframe, newframe, CV_BGR2GRAY);
+                cv::resize(newframe,newframe,cv::Size(200,200));
+
+                // преобразуем в длиб для большого и отдельных окон
+                assign_image(faceRectDlib, cv_image<uchar>(newframe));
+
+                // засекаем время выполнения
+                boost::posix_time::ptime testTimemcs = boost::posix_time::microsec_clock::universal_time();
+
+                // находим черновые точки
+                testNN = Draft_Net(faceRectDlib);
+                // по ним вырезаем части изображения и ищем на них точки более точно
+                // для левой брови
+                leb_patch = leb_net(get_patch(newframe, patch, coords, testNN, 80, 50, 0, 5));
+                // для правой брови
+                reb_patch = reb_net(get_patch(newframe, patch, coords, testNN, 80, 50, 10, 5));
+                // для носа
+                n_patch = n_net(get_patch(newframe, patch, coords, testNN, 70, 90, 20, 9));
+                // для левого глаза
+                le_patch = le_net(get_patch(newframe, patch, coords, testNN, 70, 50, 38, 6));
+                // для правого глаза
+                re_patch = re_net(get_patch(newframe, patch, coords, testNN, 70, 50, 50, 6));
+                // функция для сбора точек на изображение
+                restored = restore_image(testNN, leb_patch, reb_patch, n_patch, le_patch, re_patch, coords);
+
+                auto time = (boost::posix_time::microsec_clock::universal_time() - testTimemcs).total_microseconds();
+                cout << "Neural network time per frame: " << time << " mcs." << endl;
+
+                // отправляем также в длиб
+                boost::posix_time::ptime dlibTimemcs = boost::posix_time::microsec_clock::universal_time();
+                shape = sp(faceRectDlib, get_rect(faceRectDlib));
+                auto dlibtime = (boost::posix_time::microsec_clock::universal_time() - dlibTimemcs).total_microseconds();
+                cout << "Dlib time per frame: " << dlibtime << " mcs." << endl << "Comp: " << time / (time + dlibtime) << "%" << endl;
+
+                win.add_overlay(dlib::rectangle((long)faces[i].rect.tl().x, (long)faces[i].rect.tl().y, (long)faces[i].rect.br().x - 1, (long)faces[i].rect.br().y - 1), rgb_pixel(0,255,0));
+                win2.set_image(faceRectDlib);
+                win3.set_image(faceRectDlib);
+                // расставляем точки
+                for (int j = 0; j < 31; ++j)
+                {
+                    // добавляем точки на фрейм
+                    po.x() = ((restored(j*2)*faces[i].rect.width)/200) + faces[i].rect.x; //*200)/faces[i].rect.width)
+                    po.y() = ((restored(j*2+1)*faces[i].rect.height)/200) + faces[i].rect.y; // *200)/faces[i].rect.height)
+                    win.add_overlay(image_window::overlay_circle(po, 2, rgb_pixel(255,0,0)));
+                    win.add_overlay(po, po, rgb_pixel(255,0,0));
+                    pod.x() = ((shape.part(j + 17).x()*faces[i].rect.width)/200) + faces[i].rect.x;
+                    pod.y() = ((shape.part(j + 17).y()*faces[i].rect.height)/200) + faces[i].rect.y;
+                    win.add_overlay(image_window::overlay_circle(pod, 2, rgb_pixel(0,0,255)));
+                    win.add_overlay(pod, pod, rgb_pixel(0,0,255));
+                    // добавляем точки на окно
+                    po.x() = restored(j*2);
+                    po.y() = restored(j*2+1);
+                    win2.add_overlay(image_window::overlay_circle(po, 2, rgb_pixel(255,0,0)));
+                    win2.add_overlay(po, po, rgb_pixel(255,0,0));
+                    pod.x() = shape.part(j + 17).x();
+                    pod.y() = shape.part(j + 17).y();
+                    win3.add_overlay(image_window::overlay_circle(pod, 2, rgb_pixel(0,0,255)));
+                    win3.add_overlay(pod, pod, rgb_pixel(0,0,255));
+                }
+
+            }
+        }
+
+        /*usleep(50000);
+        rot += 5;
+        if (rot > 25) rot = -25;*/
+    //cin.get();
+
+    }
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -844,7 +1007,7 @@ int main(int argc, char *argv[])
         eye_net re_net;
 
         if (answer == 'V') test(leb_net, reb_net, n_net, le_net, re_net);
-        //if (answer == 'I') draw(net, net2, net3);
+        if (answer == 'I') draw(leb_net, reb_net, n_net, le_net, re_net);
     }
     else
     switch (multiply_network_number)
