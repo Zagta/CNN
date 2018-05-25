@@ -380,8 +380,6 @@ void test(T &net)
                 win.add_overlay(dlib::rectangle((long)faces[i].rect.tl().x, (long)faces[i].rect.tl().y, (long)faces[i].rect.br().x - 1, (long)faces[i].rect.br().y - 1), rgb_pixel(0,255,0));
                 win2.set_image(faceRectDlibRotated);
                 win3.set_image(faceRectDlibRotated);
-                win2.clear_overlay();
-                win3.clear_overlay();
 
                 // расставляем точки
                 for (int j = 0; j < 31; ++j)
@@ -649,7 +647,7 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
     dlib::matrix<float> testNN;
 
     // окно
-    dlib::image_window win;
+    dlib::image_window win, win2, win3;
 
     // точка
     dlib::point po, pod;
@@ -711,6 +709,9 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
             // несколько лиц на изображении
             // устанавливаем фрейм в созданое окно и очищаем лейаут
             win.clear_overlay();
+            win2.clear_overlay();
+            win3.clear_overlay();
+
             for (int i = 0; i < faces.size(); ++i)
             {
                 coords.clear();
@@ -754,7 +755,8 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
                 cout << "Dlib time per frame: " << dlibtime << " mcs." << endl << "Comp: " << time / (time + dlibtime) << "%" << endl;
 
                 win.add_overlay(dlib::rectangle((long)faces[i].rect.tl().x, (long)faces[i].rect.tl().y, (long)faces[i].rect.br().x - 1, (long)faces[i].rect.br().y - 1), rgb_pixel(0,255,0));
-
+                win2.set_image(faceRectDlib);
+                win3.set_image(faceRectDlib);
                 // расставляем точки
                 for (int j = 0; j < 31; ++j)
                 {
@@ -767,6 +769,15 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
                     pod.y() = ((shape.part(j + 17).y()*faces[i].rect.height)/200) + faces[i].rect.y;
                     win.add_overlay(image_window::overlay_circle(pod, 2, rgb_pixel(0,0,255)));
                     win.add_overlay(pod, pod, rgb_pixel(0,0,255));
+                    // добавляем точки на окно
+                    po.x() = restored(j*2);
+                    po.y() = restored(j*2+1);
+                    win2.add_overlay(image_window::overlay_circle(po, 2, rgb_pixel(255,0,0)));
+                    win2.add_overlay(po, po, rgb_pixel(255,0,0));
+                    pod.x() = shape.part(j + 17).x();
+                    pod.y() = shape.part(j + 17).y();
+                    win3.add_overlay(image_window::overlay_circle(pod, 2, rgb_pixel(0,0,255)));
+                    win3.add_overlay(pod, pod, rgb_pixel(0,0,255));
                 }
 
             }
