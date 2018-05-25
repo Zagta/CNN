@@ -48,7 +48,6 @@ using namespace cv;
 std::string snapshot_directory_path;                                // директория для снимков
 std::string network_name;                                           // имя сети
 std::string iter_name;                                              // номер итерации для снапшота
-std::string dataset_folder;                                         // директория с изображениями для проверки
 std::string video_path;                                             // путь к видео или значение для вебкамеры
 int net_num;
 int multiply_network_number;                                        // номер используемой сети
@@ -69,12 +68,13 @@ std::string iter_name_re;                                           // номе�
 dlib::matrix<int,2,5> patches_sizes;
 // количество точек
 dlib::matrix<int,1,5> points_sizes;
+// параметр для видеофайла, папки с изображениями или номера вебкамеры для проверки
+auto webcam_parametre = "/home/ginseng/Projects/DataSet/test.avi";
 
 namespace po = boost::program_options;
 // TODO: проверить работоспосбность, доделать восстановление, предусмотреть несколько режимов (просто брать точки или средние по расстоянию)
-auto webcam_parametre = "/home/ginseng/Projects/DataSet/test.avi";
 
-
+// --- СЕТИ ДЛЯ ПРОВЕРКИ ---
 // сеть 7
 /*using net_type = loss_mean_squared_multioutput<
                             fc<62,
@@ -147,6 +147,8 @@ using net_type_3 = loss_mean_squared_multioutput<
                             prelu<bn_con<con<8,20,20,2,2,                       // 91x91
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>>>>>>>>>;
+
+// --- СЕТИ ДЛЯ ПРОВЕРКИ КАСКАДА
 // черновая сеть 15
 using draft_net_type = loss_mean_squared_multioutput<
                             fc<62,
@@ -179,6 +181,8 @@ using nose_net = loss_mean_squared_multioutput<
                             max_pool<2,2,2,2,prelu<bn_con<con<16,20,20,1,1,     // 70x90 -> 25x35
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>;
+
+// параметры при запуске программы
 void setParams(po::variables_map &vm)
 {
     patches_sizes = 80, 80, 70, 70, 70,
@@ -206,11 +210,6 @@ void setParams(po::variables_map &vm)
     {
         multiply_network_number = vm["m_num"].as<int>();
         cout << "Multiply network number: " << multiply_network_number << endl;
-    }
-    if(vm.count("dsf"))
-    {
-        dataset_folder = vm["dsf"].as<string>();
-        cout << "Dataset folder path is: " << dataset_folder << endl;
     }
     if(vm.count("vp"))
     {
@@ -292,6 +291,7 @@ void setParams(po::variables_map &vm)
     }
 }
 
+// функция для запуска видео/вебкамеры
 template<class T>
 void test(T &net)
 {
@@ -413,13 +413,13 @@ void test(T &net)
 
     }
 }
-
+// функция для проверки изображений
 template<class T>
 void draw(T &net)
 {
     std::string newpath; // путь
 
-    QString dirpath = QString::fromStdString(dataset_folder);
+    QString dirpath = QString::fromStdString(webcam_parametre);
 
     // фрейм
     cv::Mat frame, newframe, framebgr;
@@ -538,7 +538,7 @@ void draw(T &net)
 
     }
 }
-
+// вспомогательная функция для вырезки фрагмента изображения
 dlib::matrix<uchar> get_patch(cv::Mat img, cv::Mat &patch, std::vector<float> &coords, dlib::matrix<float> &train, int patch_size_x, int patch_size_y, int part, int num)
 {
     dlib::matrix<uchar> ans;
@@ -586,7 +586,7 @@ dlib::matrix<uchar> get_patch(cv::Mat img, cv::Mat &patch, std::vector<float> &c
     assign_image(ans, cv_image<uchar>(patch));
     return ans;
 }
-// восстановление точек из патчей на начальное изображение
+// функиця восстановление точек из фрагментов на начальное изображение
 dlib::matrix<float> restore_image(dlib::matrix<float> &testNN, dlib::matrix<float> &leb_patch, dlib::matrix<float> &reb_patch, dlib::matrix<float> &n_patch, dlib::matrix<float> &le_patch, dlib::matrix<float> &re_patch, std::vector<float> &coords)
 {
     dlib::matrix<float> answer;
@@ -630,7 +630,7 @@ dlib::matrix<float> restore_image(dlib::matrix<float> &testNN, dlib::matrix<floa
 
     return answer;
 }
-
+// перегруженные функции для запуска проверки по видео или изображениям
 template<class T1, class T2, class T3>
 void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
 {
@@ -794,7 +794,7 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
 template<class T1, class T2, class T3>
 void draw(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
 {
-    QString dirpath = QString::fromStdString(dataset_folder);
+    QString dirpath = QString::fromStdString(webcam_parametre);
 
     // фрейм
     cv::Mat frame, newframe;
@@ -953,7 +953,7 @@ void draw(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
 
     }
 }
-
+// оснровная функиця программы
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -965,7 +965,6 @@ int main(int argc, char *argv[])
         ("sd", po::value<std::string>()->required()->default_value("/home/ginseng/Projects/DataSet/Snapshots"), "Set snapshot directory")
         ("in", po::value<std::string>()->default_value("10000"), "Set snapshot iteration number")
         ("m_num", po::value<int>()->default_value(0), "Set number of multiply network")
-        ("dsf", po::value<std::string>(), "Set dataset folder")
         ("vp", po::value<std::string>()->default_value("0"), "Set video folder")
         ("cascade", po::value<int>()->required()->default_value(0), "Set cascade number")
         ("draftnn", po::value<std::string>(), "Set draft network name")
@@ -998,6 +997,7 @@ int main(int argc, char *argv[])
     char answer;
     cout << "Check videos (V) or images (I)" << endl;
     cin >> answer;
+    // если выбрана проверка каскада
     if (cascade_num > 0)
     {
         eye_bow_net leb_net;
@@ -1009,7 +1009,7 @@ int main(int argc, char *argv[])
         if (answer == 'V') test(leb_net, reb_net, n_net, le_net, re_net);
         if (answer == 'I') draw(leb_net, reb_net, n_net, le_net, re_net);
     }
-    else
+    else // иначе проверяем одну из цельных сетей
     switch (multiply_network_number)
     {
     case 0:
