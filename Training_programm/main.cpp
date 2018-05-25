@@ -127,7 +127,7 @@ using net_type = loss_mean_squared_multioutput<
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>>>>>>>>>>;*/
 // сеть 12
-using net_type_2 = loss_mean_squared_multioutput<
+/*using net_type_2 = loss_mean_squared_multioutput<
                             fc<62,
                             max_pool<2,2,2,2,prelu<bn_con<con<128,3,3,1,1,  // 8x8 -> 4x4
                             max_pool<2,2,2,2,prelu<bn_con<con<64,3,3,1,1,   // 19x19 -> 10x10
@@ -137,7 +137,7 @@ using net_type_2 = loss_mean_squared_multioutput<
                             max_pool<2,2,2,2,prelu<bn_con<con<16,3,3,1,1,   // 97x97 -> 49x49
                             max_pool<2,2,2,2,prelu<bn_con<con<8,3,3,1,1,    // 198x198 -> 99x99
                             input<matrix<uchar>>
-                            >>>>>>>>>>>>>>>>>>>>>>>>>>>>;
+                            >>>>>>>>>>>>>>>>>>>>>>>>>>>>;*/
 /*
 // сеть 13
 using net_type = loss_mean_squared_multioutput<
@@ -169,6 +169,13 @@ using net_type = loss_mean_squared_multioutput<
                             prelu<bn_con<con<8,20,20,2,2,                       // 91x91
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>>>>>>>>>;
+// черновая сеть 1
+using net_type_1 = loss_mean_squared_multioutput<
+                            fc<62,
+                            max_pool<2,2,2,2,prelu<bn_con<25,3,3,2,2, //  ->
+                            max_pool<2,2,2,2,prelu<bn_con<20,5,5,2,2, //  ->
+                            input<matrix<uchar>> // 200x200
+                            >>>>>>>>;
 
 // --- Здесь записаны сети для обучения на частях исходного изображения (черновая сеть, определяющая начальные точки, а также сети для бровей, глаз и носа)
 // черновая сеть 15
