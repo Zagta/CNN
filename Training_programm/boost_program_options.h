@@ -39,6 +39,7 @@ public:
     static bool random_cropper_flip;                                           // использование отражения изображения по горизонтали
     static bool eye_reshaper;                                                  // использование eye_reshaper
     static int eye_chance;                                                     // вероятность закрытого глаза
+    static int open_eye_chance;                                                     // вероятность закрытого глаза
     static bool multiply_network;                                              // использование второй сети
     static bool check_image;                                                   // проверка изображения
     static int images;                                                         // 42100; Helen - 1605; celba4500 - 3600; celeba+helens - 4600; lfwp - 600; accurate300wDetect - 2000; accurate300WCalc - 12000; accurate300wPlusCalc - 18500; celebafull - 530000 (всего 547221);

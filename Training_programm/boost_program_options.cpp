@@ -27,6 +27,7 @@ bool bpo::check_image;                                                   // ис
 int bpo::images;                                                         // 42100; Helen - 1605; celba4500 - 3600; celeba+helens - 4600; lfwp - 600; accurate300wDetect - 2000; accurate300WCalc - 12000; accurate300wPlusCalc - 18500; celebafull - 530000 (всего 547221);
 int bpo::multiply_network_number;                                        // номер используемой сети
 int bpo::eye_chance;                                                     // вероятность закрытия глаза
+int bpo::open_eye_chance;                                                // вероятность закрытия глаза
 std::string bpo::draft_network_name;                                     // имя черновой сети
 int bpo::cascade_num;                                                    // параметр для обучения каскада
 std::string bpo::draft_iter_name;                                        // номер итерации для чернового снапшота
@@ -150,6 +151,11 @@ void bpo::SetParams(po::variables_map &vm)
         eye_chance = vm["ershc"].as<int>();
         cout << "Eye_reshaper chance is: " << eye_chance << endl;
     }
+    if(vm.count("ershcc"))
+    {
+        open_eye_chance = vm["ershcc"].as<int>();
+        cout << "Open_eye_reshaper chance is: " << open_eye_chance << endl;
+    }
     if(vm.count("rndcf"))
     {
         random_cropper_flip = vm["rndcf"].as<bool>();
@@ -217,6 +223,7 @@ int bpo::GetParams(int argc, char *argv[])
         ("rndcr", po::value<bool>()->required()->default_value(0), "Set if you want to use random_cropper_resize")
         ("ersh", po::value<bool>()->required()->default_value(0), "Set if you want to use eye_reshaper")
         ("ershc", po::value<int>()->required()->default_value(30), "Set chance to close eye")
+        ("ershcc", po::value<int>()->required()->default_value(30), "Set chance to open wide eye")
         ("rndcf", po::value<bool>()->required()->default_value(0), "Set if you want to use random_cropper_flip")
         ("multi", po::value<bool>()->required()->default_value(0), "Set if you want to train multiply networks")
         ("check", po::value<bool>()->required()->default_value(0), "Set if you want to check minibatch image")
