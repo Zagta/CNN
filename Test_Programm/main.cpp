@@ -252,7 +252,7 @@ void setParams(po::variables_map &vm)
     }
     if(vm.count("net_reb_nn"))
     {
-        network_name_leb = vm["net_reb_nn"].as<string>();
+        network_name_reb = vm["net_reb_nn"].as<string>();
         cout << "Right eyebow neural network name is: " << network_name_reb << endl;
     }
 
@@ -286,7 +286,7 @@ void setParams(po::variables_map &vm)
     }
     if(vm.count("net_re_nn"))
     {
-        network_name_le = vm["net_re_nn"].as<string>();
+        network_name_re = vm["net_re_nn"].as<string>();
         cout << "Right eye neural network name is: " << network_name_re << endl;
     }
 }
@@ -539,10 +539,11 @@ void draw(T &net)
     }
 }
 // вспомогательная функция для вырезки фрагмента изображения
-dlib::matrix<uchar> get_patch(cv::Mat img, cv::Mat &patch, std::vector<float> &coords, dlib::matrix<float> &train, int patch_size_x, int patch_size_y, int part, int num)
+dlib::matrix<uchar> get_patch(cv::Mat img, std::vector<float> &coords, dlib::matrix<float> &train, int patch_size_x, int patch_size_y, int part, int num)
 {
     dlib::matrix<uchar> ans;
     dlib::point minp, maxp;
+    cv::Mat patch;
 
     // задаём начальные значения точек максимума и минимума
     minp.x() = img.cols; minp.y() = img.rows; maxp.x() = 0; maxp.y() = 0;
@@ -586,6 +587,29 @@ dlib::matrix<uchar> get_patch(cv::Mat img, cv::Mat &patch, std::vector<float> &c
     assign_image(ans, cv_image<uchar>(patch));
     return ans;
 }
+
+void display_image(dlib::matrix<uchar> imgGray, dlib::matrix<float> train)
+{
+    // окно и точка на нём
+    dlib::image_window win;
+    dlib::point po;
+    // выводим изображение на экран
+    win.clear_overlay();
+    win.set_image(imgGray);
+    // расставим точки на слой
+    for (int j = 0; j < train.size()/2; ++j)
+    {
+        // расстановка точек (синие)
+        po.x() = train(j*2);
+        po.y() = train(j*2+1);
+        win.add_overlay(dlib::image_window::overlay_circle(po, 2, dlib::rgb_pixel(0,0,255)));
+        win.add_overlay(po, po, dlib::rgb_pixel(0,0,255));
+        //cout << "Test " << j << ": x - " << po.x() << " y - " << po.y() << endl;
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.get();
+}
+
 // функиця восстановление точек из фрагментов на начальное изображение
 dlib::matrix<float> restore_image(dlib::matrix<float> &testNN, dlib::matrix<float> &leb_patch, dlib::matrix<float> &reb_patch, dlib::matrix<float> &n_patch, dlib::matrix<float> &le_patch, dlib::matrix<float> &re_patch, std::vector<float> &coords)
 {
@@ -593,41 +617,46 @@ dlib::matrix<float> restore_image(dlib::matrix<float> &testNN, dlib::matrix<floa
     answer.set_size(testNN.nr(), testNN.nc());
 
     int bias = 0;
+    int coord_bias = 0;
     // Левая бровь
     for (int i = 0; i < leb_patch.size()/2; ++i)
     {
-        answer(i * 2 + bias) = leb_patch(i * 2 + 1) * ((float)coords[2 + i + bias * 4] - (float)coords[i + bias * 4]) / patches_sizes(0, cascade_num - 1) + coords[i + bias * 4];
-        answer(i * 2 + 1 + bias) = leb_patch(i * 2 + 1) * ((float)coords[3 + i + bias * 4] - (float)coords[1+ i + bias * 4]) / patches_sizes(0, cascade_num - 1) + coords[1 + i + bias * 4];
+        answer(i * 2 + bias) = leb_patch(i * 2) * (coords[2 + coord_bias] - coords[coord_bias]) / patches_sizes(0, 0) + coords[coord_bias];
+        answer(i * 2 + 1 + bias) = leb_patch(i * 2 + 1) * (coords[3 + coord_bias] - coords[1 + coord_bias]) / patches_sizes(1, 0) + coords[1 + coord_bias];
     }
-    bias += leb_patch.size()/2;
+    bias += leb_patch.size();
+    coord_bias += 4;
     // Правая бровь
     for (int i = 0; i < reb_patch.size()/2; ++i)
     {
-        answer(i * 2 + bias) = reb_patch(i * 2 + 1) * ((float)coords[2 + i + bias * 4] - (float)coords[i + bias * 4]) / patches_sizes(0, cascade_num - 1) + coords[i + bias * 4];
-        answer(i * 2 + 1 + bias) = reb_patch(i * 2 + 1) * ((float)coords[3 + i + bias * 4] - (float)coords[1+ i + bias * 4]) / patches_sizes(0, cascade_num - 1) + coords[1 + i + bias * 4];
+        answer(i * 2 + bias) = reb_patch(i * 2) * (coords[2 + coord_bias] - coords[coord_bias]) / patches_sizes(0, 1) + coords[coord_bias];
+        answer(i * 2 + 1 + bias) = reb_patch(i * 2 + 1) * (coords[3 + coord_bias] - coords[1 + coord_bias]) / patches_sizes(1, 1) + coords[1 + coord_bias];
     }
-    bias += reb_patch.size()/2;
+    bias += reb_patch.size();
+    coord_bias += 4;
     // Нос
     for (int i = 0; i < n_patch.size()/2; ++i)
     {
-        answer(i * 2 + bias) = n_patch(i * 2 + 1) * ((float)coords[2 + i + bias * 4] - (float)coords[i + bias * 4]) / patches_sizes(0, cascade_num - 1) + coords[i + bias * 4];
-        answer(i * 2 + 1 + bias) = n_patch(i * 2 + 1) * ((float)coords[3 + i + bias * 4] - (float)coords[1+ i + bias * 4]) / patches_sizes(0, cascade_num - 1) + coords[1 + i + bias * 4];
+        answer(i * 2 + bias) = n_patch(i * 2) * (coords[2 + coord_bias] - coords[coord_bias]) / patches_sizes(0, 2) + coords[coord_bias];
+        answer(i * 2 + 1 + bias) = n_patch(i * 2 + 1) * (coords[3 + coord_bias] - coords[1 + coord_bias]) / patches_sizes(1, 2) + coords[1 + coord_bias];
     }
-    bias += n_patch.size()/2;
+    bias += n_patch.size();
+    coord_bias += 4;
     // Левый глаз
     for (int i = 0; i < le_patch.size()/2; ++i)
     {
-        answer(i * 2 + bias) = le_patch(i * 2 + 1) * ((float)coords[2 + i + bias * 4] - (float)coords[i + bias * 4]) / patches_sizes(0, cascade_num - 1) + coords[i + bias * 4];
-        answer(i * 2 + 1 + bias) = le_patch(i * 2 + 1) * ((float)coords[3 + i + bias * 4] - (float)coords[1+ i + bias * 4]) / patches_sizes(0, cascade_num - 1) + coords[1 + i + bias * 4];
+        answer(i * 2 + bias) = le_patch(i * 2) * (coords[2 + coord_bias] - coords[coord_bias]) / patches_sizes(0, 3) + coords[coord_bias];
+        answer(i * 2 + 1 + bias) = le_patch(i * 2 + 1) * (coords[3 + coord_bias] - coords[1 + coord_bias]) / patches_sizes(1, 3) + coords[1 + coord_bias];
     }
-    bias += le_patch.size()/2;
+    bias += le_patch.size();
+    coord_bias += 4;
     // Правый глаз
     for (int i = 0; i < re_patch.size()/2; ++i)
     {
-        answer(i * 2 + bias) = re_patch(i * 2 + 1) * ((float)coords[2 + i + bias * 4] - (float)coords[i + bias * 4]) / patches_sizes(0, cascade_num - 1) + coords[i + bias * 4];
-        answer(i * 2 + 1 + bias) = re_patch(i * 2 + 1) * ((float)coords[3 + i + bias * 4] - (float)coords[1+ i + bias * 4]) / patches_sizes(0, cascade_num - 1) + coords[1 + i + bias * 4];
+        answer(i * 2 + bias) = re_patch(i * 2) * (coords[2 + coord_bias] - coords[coord_bias]) / patches_sizes(0, 4) + coords[coord_bias];
+        answer(i * 2 + 1 + bias) = re_patch(i * 2 + 1) * (coords[3 + coord_bias] - coords[1 + coord_bias]) / patches_sizes(1, 4) + coords[1 + coord_bias];
     }
-
+    //cin.get();
     return answer;
 }
 // перегруженные функции для запуска проверки по видео или изображениям
@@ -682,7 +711,6 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
     deserialize(RightEyeNetName) >> re_net;
 
     dlib::matrix<float> leb_patch, reb_patch, n_patch, le_patch, re_patch, restored;
-    cv::Mat patch;
 
 
     // dlib shape predictor
@@ -729,24 +757,71 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
                 // засекаем время выполнения
                 boost::posix_time::ptime testTimemcs = boost::posix_time::microsec_clock::universal_time();
 
+                // --- MEMO ---
+
+                boost::posix_time::ptime DraftTimemcs = boost::posix_time::microsec_clock::universal_time();
+
                 // находим черновые точки
                 testNN = Draft_Net(faceRectDlib);
+
+                auto time1 = (boost::posix_time::microsec_clock::universal_time() - DraftTimemcs).total_microseconds();
+                cout << "Draft NN: " << time1 << " mcs." << endl;
+
                 // по ним вырезаем части изображения и ищем на них точки более точно
+
+                boost::posix_time::ptime LebTimemcs = boost::posix_time::microsec_clock::universal_time();
+
                 // для левой брови
-                leb_patch = leb_net(get_patch(newframe, patch, coords, testNN, 80, 50, 0, 5));
+                leb_patch = leb_net(get_patch(newframe, coords, testNN, patches_sizes(0,0), patches_sizes(1,0), 0, 5));
+
+                auto time2 = (boost::posix_time::microsec_clock::universal_time() - LebTimemcs).total_microseconds();
+                cout << "LEB NN: " << time2 << " mcs." << endl;
+
+                boost::posix_time::ptime RebTimemcs = boost::posix_time::microsec_clock::universal_time();
+
                 // для правой брови
-                reb_patch = reb_net(get_patch(newframe, patch, coords, testNN, 80, 50, 10, 5));
+                reb_patch = reb_net(get_patch(newframe, coords, testNN, patches_sizes(0,1), patches_sizes(1,1), 10, 5));
+
+                auto time3 = (boost::posix_time::microsec_clock::universal_time() - RebTimemcs).total_microseconds();
+                cout << "REB NN: " << time3 << " mcs." << endl;
+
+                boost::posix_time::ptime NoseTimemcs = boost::posix_time::microsec_clock::universal_time();
+
                 // для носа
-                n_patch = n_net(get_patch(newframe, patch, coords, testNN, 70, 90, 20, 9));
+                n_patch = n_net(get_patch(newframe, coords, testNN, patches_sizes(0,2), patches_sizes(1,2), 20, 9));
+
+                auto time4 = (boost::posix_time::microsec_clock::universal_time() - NoseTimemcs).total_microseconds();
+                cout << "NOSE NN: " << time4 << " mcs." << endl;
+
+                boost::posix_time::ptime LeTimemcs = boost::posix_time::microsec_clock::universal_time();
+
                 // для левого глаза
-                le_patch = le_net(get_patch(newframe, patch, coords, testNN, 70, 50, 38, 6));
+                le_patch = le_net(get_patch(newframe, coords, testNN, patches_sizes(0,3), patches_sizes(1,3), 38, 6));
+
+                auto time5 = (boost::posix_time::microsec_clock::universal_time() - LeTimemcs).total_microseconds();
+                cout << "LE NN: " << time5 << " mcs." << endl;
+
+                boost::posix_time::ptime ReTimemcs = boost::posix_time::microsec_clock::universal_time();
+
                 // для правого глаза
-                re_patch = re_net(get_patch(newframe, patch, coords, testNN, 70, 50, 50, 6));
+                re_patch = re_net(get_patch(newframe, coords, testNN, patches_sizes(0,4), patches_sizes(1,4), 50, 6));
+
+                auto time6 = (boost::posix_time::microsec_clock::universal_time() - ReTimemcs).total_microseconds();
+                cout << "RE NN: " << time6 << " mcs." << endl;
+
+                boost::posix_time::ptime RestTimemcs = boost::posix_time::microsec_clock::universal_time();
+
                 // функция для сбора точек на изображение
+                restored.set_size(testNN.nr(), testNN.nc());
                 restored = restore_image(testNN, leb_patch, reb_patch, n_patch, le_patch, re_patch, coords);
+
+                auto time7 = (boost::posix_time::microsec_clock::universal_time() - RestTimemcs).total_microseconds();
+                cout << "RESTORE: " << time7 << " mcs." << endl;
 
                 auto time = (boost::posix_time::microsec_clock::universal_time() - testTimemcs).total_microseconds();
                 cout << "Neural network time per frame: " << time << " mcs." << endl;
+
+
 
                 // отправляем также в длиб
                 boost::posix_time::ptime dlibTimemcs = boost::posix_time::microsec_clock::universal_time();
@@ -757,6 +832,8 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
                 win.add_overlay(dlib::rectangle((long)faces[i].rect.tl().x, (long)faces[i].rect.tl().y, (long)faces[i].rect.br().x - 1, (long)faces[i].rect.br().y - 1), rgb_pixel(0,255,0));
                 win2.set_image(faceRectDlib);
                 win3.set_image(faceRectDlib);
+                win2.clear_overlay();
+                win3.clear_overlay();
                 // расставляем точки
                 for (int j = 0; j < 31; ++j)
                 {
@@ -790,7 +867,6 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
 
     }
 }
-
 template<class T1, class T2, class T3>
 void draw(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
 {
@@ -896,15 +972,15 @@ void draw(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
                 testNN = Draft_Net(faceRectDlib);
                 // по ним вырезаем части изображения и ищем на них точки более точно
                 // для левой брови
-                leb_patch = leb_net(get_patch(newframe, patch, coords, testNN, 80, 50, 0, 5));
+                leb_patch = leb_net(get_patch(newframe, coords, testNN, 80, 50, 0, 5));
                 // для правой брови
-                reb_patch = reb_net(get_patch(newframe, patch, coords, testNN, 80, 50, 10, 5));
+                reb_patch = reb_net(get_patch(newframe, coords, testNN, 80, 50, 10, 5));
                 // для носа
-                n_patch = n_net(get_patch(newframe, patch, coords, testNN, 70, 90, 20, 9));
+                n_patch = n_net(get_patch(newframe, coords, testNN, 70, 90, 20, 9));
                 // для левого глаза
-                le_patch = le_net(get_patch(newframe, patch, coords, testNN, 70, 50, 38, 6));
+                le_patch = le_net(get_patch(newframe, coords, testNN, 70, 50, 38, 6));
                 // для правого глаза
-                re_patch = re_net(get_patch(newframe, patch, coords, testNN, 70, 50, 50, 6));
+                re_patch = re_net(get_patch(newframe, coords, testNN, 70, 50, 50, 6));
                 // функция для сбора точек на изображение
                 restored = restore_image(testNN, leb_patch, reb_patch, n_patch, le_patch, re_patch, coords);
 

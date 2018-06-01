@@ -31,7 +31,6 @@ LIBS += -L/usr/local/lib/ -lopencv_core -lopencv_imgproc -lopencv_highgui -lopen
 LIBS += -L/usr/lib/x86_64-linux-gnu -lboost_program_options
 LIBS += -L/usr/lib/x86_64-linux-gnu -llmdb
 
-
 LIBS += -lX11
 
 # The following define makes your compiler emit warnings if you use

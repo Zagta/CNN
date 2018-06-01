@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.3.1, 2018-05-25T10:24:13. -->
+<!-- Written by QtCreator 4.3.1, 2018-06-01T11:25:28. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -306,7 +306,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">TestNetwork2</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/ginseng/Projects/Facial_keypoint_extraction_CNN/Test_Programm/TestNetwork.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">--nn 24_05_Net15_bs64_FEISoFFDDBBioID_Bcg_FixedRC_ErshLR_Flip_ersh20 --m_num 2 --in 239294</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">--draftnn 30_01_Net15_bs32_FEISoFFDDBBioID_Bcg_FixedRC_ErshLR_Flip --draftin 168149 --net_leb_nn 17_05_left_eyebow --net_leb_in 157745 --net_reb_nn 17_05_right_eyebow --net_reb_in 151982 --net_nose_nn 17_05_nose --net_nose_in 174167 --net_le_nn 17_05_left_eye --net_le_in 173249 --net_re_nn 17_05_right_eye --net_re_in 174779 --cascade 1</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">TestNetwork.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>

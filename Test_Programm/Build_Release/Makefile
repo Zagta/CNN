@@ -2014,7 +2014,7 @@ LMDBCursor.o: ../../../../lib/LMDBwrapper/LMDBCursor.cpp ../../../../lib/LMDBwra
 LMDBTransaction.o: ../../../../lib/LMDBwrapper/LMDBTransaction.cpp ../../../../lib/LMDBwrapper/LMDBTransaction.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o LMDBTransaction.o ../../../../lib/LMDBwrapper/LMDBTransaction.cpp
 
-CpuFaceDetector.o: ../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp ../../TestFaceDetectorVideoCreator/CpuFaceDetector.h
+CpuFaceDetector.o: ../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CpuFaceDetector.o ../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp
 
 ####### Install
