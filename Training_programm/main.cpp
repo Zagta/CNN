@@ -675,13 +675,6 @@ void test_network(T &net)
                     net_labels_imgproc(j*2) = predicted_labels[i](j*2) * ((float)all_coords(2,i) - (float)all_coords(0,i)) / bpo::patches_sizes(0, bpo::cascade_num - 1) + all_coords(0,i);
                     net_labels_imgproc(j*2+1) = predicted_labels[i](j*2+1) * ((float)all_coords(3,i) - (float)all_coords(1,i)) / bpo::patches_sizes(1, bpo::cascade_num - 1) + all_coords(1,i);
 
-                    // test
-                    /*
-                    difference_x = round(abs(test_labels[i](j*2) - predicted_labels[i](j*2)));
-                    difference_y = round(abs(test_labels[i](j*2+1) - predicted_labels[i](j*2+1)));
-
-                    cout << test_labels[i](j*2) << " - " << predicted_labels[i](j*2) << " = " << difference_x << endl;
-                    cout << test_labels[i](j*2+1) << " - " << predicted_labels[i](j*2+1) << " = " << difference_y << endl << endl;*/
 
                 }
                 img_proc::display_image(test_samples_full[i], true_labels_imgproc, net_labels_imgproc);
@@ -689,16 +682,6 @@ void test_network(T &net)
             else
             {
                img_proc::display_image(test_samples[i], test_labels[i], predicted_labels[i]);
-
-               /*for (int j = 0; j < predicted_labels[i].size()/2; ++j)
-               {
-                   difference_x = round(abs(test_labels[i](j*2) - predicted_labels[i](j*2)));
-                   difference_y = round(abs(test_labels[i](j*2+1) - predicted_labels[i](j*2+1)));
-
-                   cout << test_labels[i](j*2) << " - " << predicted_labels[i](j*2) << " = " << difference_x << endl;
-                   cout << test_labels[i](j*2+1) << " - " << predicted_labels[i](j*2+1) << " = " << difference_y << endl << endl;
-               }*/
-
             }
             cout << "Type 'C' to continue and 'A' to auto" << endl;
             cin >> answer;
@@ -725,10 +708,6 @@ void test_network(T &net)
                 // вычисляем разницу
                 difference_x = round(abs(test_labels[i](j*2) - predicted_labels[i](j*2)));
                 difference_y = round(abs(test_labels[i](j*2+1) - predicted_labels[i](j*2+1)));
-
-                /*cout << test_labels[i](j*2) << " - " << predicted_labels[i](j*2) << " = " << difference_x << endl;
-                cout << test_labels[i](j*2+1) << " - " << predicted_labels[i](j*2+1) << " = " << difference_y << endl;
-                cin.get();*/
 
                 if (difference_x < 3 && difference_y < 3) num_right_3x3++;
                 else num_wrong_3x3++;
@@ -779,7 +758,7 @@ void test_network(T &net)
         cout << "Wrong points in euclid dist 3: " << num_wrong_euclid_3 << ", right points: " << num_right_euclid_3 << ". Accuracy: " << fixed << num_right_euclid_3/(double)(num_right_euclid_3+num_wrong_euclid_3) << endl;
         cout << "Wrong points in euclid dist 5: " << num_wrong_euclid_5 << ", right points: " << num_right_euclid_5 << ". Accuracy: " << fixed << num_right_euclid_5/(double)(num_right_euclid_5+num_wrong_euclid_5) << endl;
         if (bpo::cascade_num == 4 || bpo::cascade_num == 0) cout << "Wrong left e_cent in euc dist 3: " << wrong_left_barycenter << ", right points: " << corr_left_barycenter << ". Accuracy: " << fixed << corr_left_barycenter/(double)(corr_left_barycenter+wrong_left_barycenter) << endl;
-        if (bpo::cascade_num == 5 || bpo::cascade_num == 0) cout << "Wrong left e_cent in euc dist 3: " << wrong_right_barycenter << ", right points: " << corr_right_barycenter << ". Accuracy: " << fixed << corr_right_barycenter/(double)(corr_right_barycenter+wrong_right_barycenter) << endl;
+        if (bpo::cascade_num == 5 || bpo::cascade_num == 0) cout << "Wrong right e_cent in euc dist 3: " << wrong_right_barycenter << ", right points: " << corr_right_barycenter << ". Accuracy: " << fixed << corr_right_barycenter/(double)(corr_right_barycenter+wrong_right_barycenter) << endl;
 
     }
 

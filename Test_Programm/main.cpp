@@ -849,7 +849,7 @@ void test(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
                 restored.set_size(testNN.nr(), testNN.nc());
                 dlib::matrix<float> t(1,1);
                 t = -1;
-                restored = restore_image(testNN, t, t, t, t, t, coords);
+                restored = restore_image(testNN, t, t, t, le_patch, re_patch, coords);
 
                 auto time7 = (boost::posix_time::microsec_clock::universal_time() - RestTimemcs).total_microseconds();
                 cout << "RESTORE: " << time7 << " mcs." << endl;
