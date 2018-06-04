@@ -335,77 +335,51 @@ void img_proc::reshape_eyes(cv::Mat &img, dlib::matrix<float> &train)
     int rnd = qrand() % 100; // мера закрытия глаза
     qsrand(QDateTime::currentMSecsSinceEpoch() + 1);
     int rnd2 = qrand() % 100; // вероятность закрытия глаз
-    int rnd3 = qrand() % 100; // мера закрытия глаза
     qsrand(QDateTime::currentMSecsSinceEpoch() + 2);
     int rnd4 = qrand() % 100;
-    int rnd5 = qrand() % 100;
 
     // перевод матрицы в дополнительную, чтобы не испортить триангуляцией первую
     cv::Mat img2;
     img.copyTo(img2);
 
     double coeff = 1;
-    double coeff2 = 1;
 
     if (rnd < 55) // полное закрытие
     {
         coeff = 0.1;
         get_eye_points(close, close2, train, coeff);
-        //cout << "fully closed" << endl;
+        cout << "fully closed" << endl;
     }
     else
     if (rnd >= 80) // небольшое закрытие
     {
         coeff = 0.7;
         get_eye_points(close, close2, train, coeff);
-        //cout << "nearly closed" << endl;
+        cout << "nearly closed" << endl;
     }
     else // наполовину
     {
         coeff = 0.5;
         get_eye_points(close, close2, train, coeff);
-        //cout << "half closed" << endl;
-    }
-
-    if (rnd > 50)
-    {
-        coeff = 1.5;
-        get_eye_points(close, close2, train, coeff);
-    }
-    else
-    {
-        coeff = 1.2;
-        get_eye_points(close, close2, train, coeff);
+        cout << "half closed" << endl;
     }
 
     // выбираем какие глаза закрыть
     if (rnd2 < 75)
     {
-        if (rnd4 <= bpo::eye_chance)
+        if (rnd4 <= 101/*bpo::eye_chance*/)
         {
             train(41) = train(49) - (train(49)-train(41))*coeff;
             train(43) = train(47) - (train(47)-train(43))*coeff;
-            set_triangles_and_transform(img, img2, close, close2, 0);
-        }
-        else if (rnd5 <= bpo::open_eye_chance)
-        {
-            train(41) = train(49) - (train(49)-train(41))*coeff2;
-            train(43) = train(47) - (train(47)-train(43))*coeff2;
             set_triangles_and_transform(img, img2, close, close2, 0);
         }
     }
     if ((rnd2 < 50) || (rnd2 >= 75))
     {
-        if (rnd4 <= bpo::eye_chance)
+        if (rnd4 <= 101/*bpo::eye_chance*/)
         {
-            train(41) = train(49) - (train(49)-train(41))*coeff;
-            train(43) = train(47) - (train(47)-train(43))*coeff;
-            set_triangles_and_transform(img, img2, close, close2, 1);
-        }
-        else if (rnd5 <= bpo::open_eye_chance)
-        {
-            train(41) = train(49) - (train(49)-train(41))*coeff2;
-            train(43) = train(47) - (train(47)-train(43))*coeff2;
+            train(53) = train(61) - (train(61)-train(53))*coeff;
+            train(55) = train(59) - (train(59)-train(55))*coeff;
             set_triangles_and_transform(img, img2, close, close2, 1);
         }
     }

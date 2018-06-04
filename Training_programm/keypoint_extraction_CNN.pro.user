@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.3.1, 2018-05-25T10:19:28. -->
+<!-- Written by QtCreator 4.3.1, 2018-06-04T10:48:54. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -306,7 +306,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">keypoint_extraction_CNN2</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/ginseng/Projects/Facial_keypoint_extraction_CNN/Training_programm/keypoint_extraction_CNN.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">--nn 24_05_Net15_bs64_FEISoFFDDBBioID_Bcg_FixedRC_ErshLR_Flip_ersh20 --multi 0 --m_num 0 --sh 0.01 --bs 64 --bcga 1 --rndc 1 --rndcr 0 --ersh 1 --ershc 20 --rndcf 1 --ldbf /home/ginseng/Projects/DataSet/LMDB/FEISoFFDDBBioID --im 80135 --in 239294</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">--nn 01_06_Test_ErshOpen --multi 0 --m_num 0 --sh 0.01 --bs 64 --bcga 1 --rndc 0 --rndcr 0 --ersh 1 --ershc 0 --ershcc 100 --check 1 --rndcf 1 --ldbf /home/ginseng/Projects/DataSet/LMDB/FEISoFFDDBBioID --im 80135</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">keypoint_extraction_CNN.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>
