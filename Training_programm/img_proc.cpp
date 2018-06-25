@@ -348,26 +348,26 @@ void img_proc::reshape_eyes(cv::Mat &img, dlib::matrix<float> &train)
     {
         coeff = 0.1;
         get_eye_points(close, close2, train, coeff);
-        cout << "fully closed" << endl;
+        //cout << "fully closed" << endl;
     }
     else
     if (rnd >= 80) // небольшое закрытие
     {
         coeff = 0.7;
         get_eye_points(close, close2, train, coeff);
-        cout << "nearly closed" << endl;
+        //cout << "nearly closed" << endl;
     }
     else // наполовину
     {
         coeff = 0.5;
         get_eye_points(close, close2, train, coeff);
-        cout << "half closed" << endl;
+        //cout << "half closed" << endl;
     }
 
     // выбираем какие глаза закрыть
     if (rnd2 < 75)
     {
-        if (rnd4 <= 101/*bpo::eye_chance*/)
+        if (rnd4 <= bpo::eye_chance)
         {
             train(41) = train(49) - (train(49)-train(41))*coeff;
             train(43) = train(47) - (train(47)-train(43))*coeff;
@@ -376,7 +376,7 @@ void img_proc::reshape_eyes(cv::Mat &img, dlib::matrix<float> &train)
     }
     if ((rnd2 < 50) || (rnd2 >= 75))
     {
-        if (rnd4 <= 101/*bpo::eye_chance*/)
+        if (rnd4 <= bpo::eye_chance)
         {
             train(53) = train(61) - (train(61)-train(53))*coeff;
             train(55) = train(59) - (train(59)-train(55))*coeff;

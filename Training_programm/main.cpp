@@ -182,7 +182,6 @@ using draft_net_type = loss_mean_squared_multioutput<
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>>>>>>>>>;
 
-
 using eye_bow_net = loss_mean_squared_multioutput<
                             fc<10,
                             prelu<bn_con<con<32,3,3,1,1,                        // 13x5
@@ -674,8 +673,6 @@ void test_network(T &net)
                     // расстановка угаданых точек на полном изображении (красные)
                     net_labels_imgproc(j*2) = predicted_labels[i](j*2) * ((float)all_coords(2,i) - (float)all_coords(0,i)) / bpo::patches_sizes(0, bpo::cascade_num - 1) + all_coords(0,i);
                     net_labels_imgproc(j*2+1) = predicted_labels[i](j*2+1) * ((float)all_coords(3,i) - (float)all_coords(1,i)) / bpo::patches_sizes(1, bpo::cascade_num - 1) + all_coords(1,i);
-
-
                 }
                 img_proc::display_image(test_samples_full[i], true_labels_imgproc, net_labels_imgproc);
             }
@@ -893,28 +890,6 @@ int main(int argc, char *argv[])
                 extract_and_process(trainer, net);
                 break;
             }
-        }
-    }
-    if (answer == 'C') // обучение сетей для частей изображения (глаза, нос, брови)
-    {
-        // номер сети каскада 0 - без каскада, 1 - левая бровь, 2 - правая бровь, 3 - нос, 4 - левый глаз, 5 - правый глаз.
-        if (bpo::cascade_num > 0 && bpo::cascade_num < 3)
-        {
-            eye_bow_net net;
-            dnn_trainer<eye_bow_net,adam> trainer(net,adam(bpo::weight_decay, 0.9, 0.999));
-            extract_and_process(trainer, net);
-        }
-        if (bpo::cascade_num == 3)
-        {
-            nose_net net;
-            dnn_trainer<nose_net,adam> trainer(net,adam(bpo::weight_decay, 0.9, 0.999));
-            extract_and_process(trainer, net);
-        }
-        if (bpo::cascade_num > 3 && bpo::cascade_num < 6)
-        {
-            eye_net net;
-            dnn_trainer<eye_net,adam> trainer(net,adam(bpo::weight_decay, 0.9, 0.999));
-            extract_and_process(trainer, net);
         }
     }
     std::terminate();
