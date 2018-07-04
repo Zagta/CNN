@@ -69,10 +69,8 @@ dlib::matrix<int,2,5> patches_sizes;
 // количество точек
 dlib::matrix<int,1,5> points_sizes;
 // параметр для видеофайла, папки с изображениями или номера вебкамеры для проверки
-auto webcam_parametre = "/home/ginseng/Projects/DataSet/test.avi";
-
+string webcam_parametre = "/home/ginseng/BaseForTest/FERET";
 namespace po = boost::program_options;
-// TODO: проверить работоспосбность, доделать восстановление, предусмотреть несколько режимов (просто брать точки или средние по расстоянию)
 
 // --- СЕТИ ДЛЯ ПРОВЕРКИ ---
 // сеть 7
@@ -126,7 +124,7 @@ using net_type = loss_mean_squared_multioutput<
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>>>>>>>>>>;
 // сеть 12
-using net_type_2 = loss_mean_squared_multioutput<
+/*using net_type_2 = loss_mean_squared_multioutput<
                             fc<62,
                             max_pool<2,2,2,2,prelu<bn_con<con<128,3,3,1,1,  // 9x9 -> 5x5
                             max_pool<2,2,2,2,prelu<bn_con<con<64,3,3,1,1,  // 22x22 -> 11x11
@@ -136,7 +134,7 @@ using net_type_2 = loss_mean_squared_multioutput<
                             max_pool<2,2,2,2,prelu<bn_con<con<16,3,3,1,1,   // 97x97 -> 49x49
                             max_pool<2,2,2,2,prelu<bn_con<con<8,3,3,1,1,   // 198x198 -> 99x99
                             input<matrix<uchar>>
-                            >>>>>>>>>>>>>>>>>>>>>>>>>>>>;
+                            >>>>>>>>>>>>>>>>>>>>>>>>>>>>;*/
 // сеть 15
 using net_type_3 = loss_mean_squared_multioutput<
                             fc<62,
@@ -147,6 +145,16 @@ using net_type_3 = loss_mean_squared_multioutput<
                             prelu<bn_con<con<8,20,20,2,2,                       // 91x91
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>>>>>>>>>;
+// сеть 16
+using net_type_2 = loss_mean_squared_multioutput<
+                            fc<62,
+                            max_pool<2,2,2,2,prelu<bn_con<con<64,3,3,1,1,       // 16x16 -> 8x8
+                            max_pool<2,2,2,2,prelu<bn_con<con<32,3,3,1,1,       // 35x35 -> 18x18
+                            prelu<bn_con<con<16,5,5,1,1,                        // 37x37
+                            max_pool<2,2,2,2,prelu<bn_con<con<16,10,10,1,1,     // 82x82 -> 41x41
+                            prelu<bn_con<con<8,20,20,2,2,                       // 91x91
+                            input<matrix<uchar>>
+                            >>>>>>>>>>>>>>>>>>>>;
 
 // --- СЕТИ ДЛЯ ПРОВЕРКИ КАСКАДА
 // черновая сеть 15
@@ -296,7 +304,7 @@ template<class T>
 void test(T &net)
 {
     // захват  камеры
-    cv::VideoCapture capture(webcam_parametre); // "/home/ginseng/Projects/DataSet/test.avi" / "/home/ginseng/Projects/DataSet/Surgut.avi"
+    cv::VideoCapture capture(0); // "/home/ginseng/Projects/DataSet/test.avi" / "/home/ginseng/Projects/DataSet/Surgut.avi"
 
     // фрейм с камеры
     cv::Mat frame, newframe, newframerotated;
@@ -345,10 +353,10 @@ void test(T &net)
             // несколько лиц на изображении
             // устанавливаем фрейм в созданое окно и очищаем лейаут
             win.clear_overlay();
-            win2.clear_overlay();
-            win3.clear_overlay();
             for (int i = 0; i < faces.size(); ++i)
             {
+                win2.clear_overlay();
+                win3.clear_overlay();
                 // находим само лицо на изображении
                 newframe = frame(faces[i].rect);
 
@@ -538,6 +546,8 @@ void draw(T &net)
 
     }
 }
+
+
 // вспомогательная функция для вырезки фрагмента изображения
 dlib::matrix<uchar> get_patch(cv::Mat img, std::vector<float> &coords, dlib::matrix<float> &train, int patch_size_x, int patch_size_y, int part, int num)
 {
@@ -587,7 +597,6 @@ dlib::matrix<uchar> get_patch(cv::Mat img, std::vector<float> &coords, dlib::mat
     assign_image(ans, cv_image<uchar>(patch));
     return ans;
 }
-
 // функиця восстановление точек из фрагментов на начальное изображение
 dlib::matrix<float> restore_image(dlib::matrix<float> &testNN, dlib::matrix<float> &leb_patch, dlib::matrix<float> &reb_patch, dlib::matrix<float> &n_patch, dlib::matrix<float> &le_patch, dlib::matrix<float> &re_patch, std::vector<float> &coords)
 {
@@ -1066,7 +1075,8 @@ void draw(T1 &leb_net, T1 &reb_net, T2 &n_net, T3 &le_net, T3 &re_net)
         }
     }
 }
-// оснровная функиця программы
+
+// оснровная функиция программы
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);

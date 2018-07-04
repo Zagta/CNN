@@ -23,8 +23,6 @@ using namespace cv;
 
 using bpo = boost_program_options;
 
-// TODO: проверить функцию проверки (на проценты),
-
 // --- Здесь записаны основные сети для обучения ---
 
 /* //Сеть 1 (testBacgrounds)
@@ -127,7 +125,7 @@ using net_type = loss_mean_squared_multioutput<
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>>>>>>>>>>;*/
 // сеть 12
-using net_type_2 = loss_mean_squared_multioutput<
+/*using net_type_2 = loss_mean_squared_multioutput<
                             fc<62,
                             max_pool<2,2,2,2,prelu<bn_con<con<128,3,3,1,1,  // 8x8 -> 4x4
                             max_pool<2,2,2,2,prelu<bn_con<con<64,3,3,1,1,   // 19x19 -> 10x10
@@ -137,7 +135,7 @@ using net_type_2 = loss_mean_squared_multioutput<
                             max_pool<2,2,2,2,prelu<bn_con<con<16,3,3,1,1,   // 97x97 -> 49x49
                             max_pool<2,2,2,2,prelu<bn_con<con<8,3,3,1,1,    // 198x198 -> 99x99
                             input<matrix<uchar>>
-                            >>>>>>>>>>>>>>>>>>>>>>>>>>>>;
+                            >>>>>>>>>>>>>>>>>>>>>>>>>>>>;*/
 /*
 // сеть 13
 using net_type = loss_mean_squared_multioutput<
@@ -169,8 +167,22 @@ using net_type = loss_mean_squared_multioutput<
                             prelu<bn_con<con<8,20,20,2,2,                       // 91x91
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>>>>>>>>>;
+// сеть 16
+using net_type_2 = loss_mean_squared_multioutput<
+                            fc<62,
+                            max_pool<2,2,2,2,prelu<bn_con<con<64,3,3,1,1,       // 16x16 -> 8x8
+                            max_pool<2,2,2,2,prelu<bn_con<con<32,3,3,1,1,       // 35x35 -> 18x18
+                            prelu<bn_con<con<16,5,5,1,1,                        // 37x37
+                            max_pool<2,2,2,2,prelu<bn_con<con<16,10,10,1,1,     // 82x82 -> 41x41
+                            prelu<bn_con<con<8,20,20,2,2,                       // 91x91
+                            input<matrix<uchar>>
+                            >>>>>>>>>>>>>>>>>>>>;
 
-// --- Здесь записаны сети для обучения на частях исходного изображения (черновая сеть, определяющая начальные точки, а также сети для бровей, глаз и носа)
+
+
+// Далее описаны сети для отдельной обработки участков изображения. Черновая сеть находит примерные точки нахождения
+// глаз, носа, бровей, программа вырезает по ним необходимые патчи и на них тренирует оставшиеся сети
+
 // черновая сеть 15
 using draft_net_type = loss_mean_squared_multioutput<
                             fc<62,
@@ -260,7 +272,7 @@ void create_minibatch (std::vector<matrix<uchar>> &mini_batch_samples, std::vect
     }
 }
 
-// функция создания минипакетов для части изображения
+// функция создания минипакетов для отдельных частей изображений
 template <class DT>
 void create_minibatch (std::vector<matrix<uchar>> &mini_batch_samples, std::vector<dlib::matrix<float>> &mini_batch_labels, LMDBCursor* &cursor, DT &DraftNet)
 {

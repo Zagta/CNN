@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.3.1, 2018-06-25T10:50:02. -->
+<!-- Written by QtCreator 4.3.1, 2018-07-04T09:52:00. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -306,7 +306,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">keypoint_extraction_CNN2</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/ginseng/Projects/Facial_keypoint_extraction_CNN/Training_programm/keypoint_extraction_CNN.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">--nn 04_06_Net15_bs32_FEISoFFDDBBioID_Bcg_FixedRC_ErshLR_Flip --multi 0 --m_num 0 --bs 32 --bcga 1 --rndc 1 --rndcr 0 --ersh 1 --rndcf 1 --ldbf /home/ginseng/Projects/DataSet/LMDB/celebaFull --im 535000 --in 109652</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">--nn 02_07_Net16_bs64_FEISoFFDDBBioID_Bcg_FixedRC_ErshLR_Flip --multi 0 --m_num 1 --bs 64 --bcga 1 --rndc 1 --rndcr 0 --ersh 1 --rndcf 1 --ldbf /home/ginseng/Projects/DataSet/LMDB/celebaFull --im 535000 --in 143975</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">keypoint_extraction_CNN.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>
