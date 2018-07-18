@@ -725,7 +725,7 @@ main.o: ../main.cpp ../../../../Qt/5.9.1/gcc_64/include/QtCore/QCoreApplication 
 		../../../../lib/LMDBwrapper/LMDB.h \
 		../../../../lib/LMDBwrapper/LMDBCursor.h \
 		../../../../lib/LMDBwrapper/LMDBTransaction.h \
-		../../TestFaceDetectorVideoCreator/CpuFaceDetector.h \
+		../../../TestFaceDetectorVideoCreator/CpuFaceDetector.h \
 		../../../../lib/dlib-19.4/dlib/array2d.h \
 		../../../../lib/dlib-19.4/dlib/array2d/array2d_kernel.h \
 		../../../../lib/dlib-19.4/dlib/array2d/array2d_kernel_abstract.h \
@@ -2014,7 +2014,7 @@ LMDBCursor.o: ../../../../lib/LMDBwrapper/LMDBCursor.cpp ../../../../lib/LMDBwra
 LMDBTransaction.o: ../../../../lib/LMDBwrapper/LMDBTransaction.cpp ../../../../lib/LMDBwrapper/LMDBTransaction.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o LMDBTransaction.o ../../../../lib/LMDBwrapper/LMDBTransaction.cpp
 
-CpuFaceDetector.o: ../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp 
+CpuFaceDetector.o: ../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp ../../../TestFaceDetectorVideoCreator/CpuFaceDetector.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CpuFaceDetector.o ../../TestFaceDetectorVideoCreator/CpuFaceDetector.cpp
 
 ####### Install

@@ -146,7 +146,7 @@ using net_type_3 = loss_mean_squared_multioutput<
                             input<matrix<uchar>>
                             >>>>>>>>>>>>>>>>>>>>>;
 // сеть 16
-using net_type_2 = loss_mean_squared_multioutput<
+/*using net_type_2 = loss_mean_squared_multioutput<
                             fc<62,
                             max_pool<2,2,2,2,prelu<bn_con<con<64,3,3,1,1,       // 16x16 -> 8x8
                             max_pool<2,2,2,2,prelu<bn_con<con<32,3,3,1,1,       // 35x35 -> 18x18
@@ -154,7 +154,18 @@ using net_type_2 = loss_mean_squared_multioutput<
                             max_pool<2,2,2,2,prelu<bn_con<con<16,10,10,1,1,     // 82x82 -> 41x41
                             prelu<bn_con<con<8,20,20,2,2,                       // 91x91
                             input<matrix<uchar>>
-                            >>>>>>>>>>>>>>>>>>>>;
+                            >>>>>>>>>>>>>>>>>>>>;*/
+// сеть 17
+using net_type_2 = loss_mean_squared_multioutput<
+                            fc<62,
+                            max_pool<2,2,2,2,prelu<bn_con<con<128,3,3,1,1,      // 6x6 -> 3x3
+                            max_pool<2,2,2,2,prelu<bn_con<con<64,3,3,1,1,       // 16x16 -> 8x8
+                            max_pool<2,2,2,2,prelu<bn_con<con<32,3,3,1,1,       // 35x35 -> 18x18
+                            prelu<bn_con<con<16,5,5,1,1,                        // 37x37
+                            max_pool<2,2,2,2,prelu<bn_con<con<16,10,10,1,1,     // 82x82 -> 41x41
+                            prelu<bn_con<con<8,20,20,2,2,                       // 91x91
+                            input<matrix<uchar>>
+                            >>>>>>>>>>>>>>>>>>>>>>>>;
 
 // --- СЕТИ ДЛЯ ПРОВЕРКИ КАСКАДА
 // черновая сеть 15
