@@ -678,7 +678,6 @@ void test_network(T &net)
 
     if (answer == 'M') // просмотр полученных изображений вручную
     {
-        //MEMO
         int difference_x = 0, difference_y = 0;
         // проверяем каждое изображение
         for (int i = 0; i < test_samples.size(); ++i)
